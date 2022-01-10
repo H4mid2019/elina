@@ -5,6 +5,7 @@ __pycache__/
 .data/
 .dbdata/
 .env
+.redis/
 # C extensions
 *.so
 
