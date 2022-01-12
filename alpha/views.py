@@ -11,7 +11,6 @@ from datetime import datetime
 import pytz
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -31,15 +30,15 @@ class PostViewSet(viewsets.ViewSet):
 
         rate, refresh_date = fetch_alphavantage()
         if rate:
-            exchange = ExchangeRate(rate=rate, server_refreshed_date=pytz.utc.localize(datetime.fromisoformat(refresh_date)))
-            exchange.save()
+            exchange = ExchangeRate.objects.create(rate=rate, server_refreshed_date=pytz.utc.localize(
+                datetime.fromisoformat(refresh_date)))
             serializer = ExchangeRateSerializer(exchange)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
         logger.warning("I couldn't fetch the API endpoint")
-        return Response({"error": "I couldn't fetch the API endpoint", "rate": None}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return Response({"error": "I couldn't fetch the API endpoint", "rate": None},
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-    
     def retrieve(self, request, pk=None):
         """this method returns only the latest exchange rate from db
         """
@@ -60,7 +59,7 @@ def create_auth(request):
 
 
 @api_view(['POST'])
-@permission_classes((AllowAny, ))
+@permission_classes((AllowAny,))
 def create_api_key(request):
     """this view function accepts only post requests and a json with name then creates api_key and retruns them, 
     if name doesn't provide by defult uses unknown

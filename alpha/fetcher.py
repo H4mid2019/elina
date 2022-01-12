@@ -2,9 +2,7 @@ from sys import flags
 import requests
 import os
 
-
 API_KEY = os.getenv('ALPHAVANTAGE_API_TOKEN', "demo")
-
 
 
 def fetch_alphavantage():
@@ -17,6 +15,6 @@ def fetch_alphavantage():
     r = requests.get(url)
     if r.status_code == 200:
         data = r.json().get("Realtime Currency Exchange Rate")
-        return data.get("5. Exchange Rate"),data.get("6. Last Refreshed")
+        return data.get("5. Exchange Rate"), data.get("6. Last Refreshed")
     else:
         return False, False

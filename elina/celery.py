@@ -13,19 +13,18 @@ app = Celery('elina')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-
 app.conf.beat_schedule = {
-    #Scheduler Name
+    # Scheduler Name
     'fetch_every_hour': {
         # Task Name (Name Specified in Decorator)
-        'task': 'alpha.tasks.scheduled_fetcher',  
+        'task': 'alpha.tasks.scheduled_fetcher',
         # Schedule      
         'schedule': crontab(minute=0, hour='*/1'),
     },
 }
 
-
 app.autodiscover_tasks()
+
 
 @app.task(bind=True)
 def debug_task(self):
