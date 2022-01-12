@@ -6,6 +6,7 @@ __pycache__/
 .dbdata/
 .env
 .redis/
+.idea/
 static/
 # C extensions
 *.so
