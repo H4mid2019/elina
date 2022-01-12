@@ -4,14 +4,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: 'python manage.py runserver 0.0.0.0:8000'
+    command: bash -c "python manage.py migrate && gunicorn -w 1 elina.wsgi:application -b 0.0.0.0:8000"
     environment:      
       - ALPHAVANTAGE_API_TOKEN=${ALPHAVANTAGE_API_TOKEN} 
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DEBUG}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
     ports:
       - 8000:8000
-      - 5555:5555
     volumes:
       - .:/app
     depends_on:
@@ -30,10 +32,26 @@ services:
     image: postgres:14.0
     restart: always
     environment:
-      POSTGRES_DB: alpha
-      POSTGRES_USER: alpha
-      POSTGRES_PASSWORD: alpha
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - .dbdata:/var/lib/postgresql/data
       - .data:/data
+  celery:
+    restart: on-failure
+    build: .
+    command: bash -c "celery -A elina beat -l info --logfile=celery.beat.log --detach && celery -A elina worker -l info"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+    depends_on:
+      - db
+      - redis
+      - backend
+
