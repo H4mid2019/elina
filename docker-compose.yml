@@ -4,16 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "python manage.py migrate && gunicorn -w 1 elina.wsgi:application -b 0.0.0.0:8000"
-    environment:      
-      - ALPHAVANTAGE_API_TOKEN=${ALPHAVANTAGE_API_TOKEN} 
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-    ports:
-      - 8000:8000
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn -w 1 elina.wsgi:application -b 0.0.0.0:8000"
+    env_file:
+      - ./.env
     volumes:
       - .:/app
     depends_on:
@@ -55,3 +48,11 @@ services:
       - redis
       - backend
 
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./static:/app/static
+    ports:
+      - 82:80
+    depends_on:
+      - backend
