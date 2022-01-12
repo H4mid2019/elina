@@ -4,21 +4,26 @@ This is a fully fledge Django app which fetches alphavantage API every hour and 
 and it stores into DB. Also, it provides three API endpoints for retrieving the data and fetching the rate at the moment.
 
 **Tech Stack:**
+
 Django, PostgreSQL, Redis, Celery, Nginx
 
 **Setup:**
+
 1- Obtain an API key from alphavantage change the .env.example to .env, and add your API key to that
 also, if you want to enable the DEBUG in Django, you can set it in the .env file edit the Django secret key to your 
 desire secret key. 
 
 _Hint_
+
 By default, it uses the 82 as TCP port for serving the data, and you can access the admin panel 
 via 127.0.0.1:82/admin. If you want to deploy it on a domain due to using Django 4,
 you have to change _CSRF_TRUSTED_ORIGINS_ in Django settings.
 
 
 2- For spinning her up, you can start with this command:
+
 `docker-compose up --build`
+
 only for the first time; after that, you can remove the _--build_ switch.
 
 **Using**
@@ -27,12 +32,14 @@ It provides five endpoints:
 
 **_1-_** 
 for obtaining an API key or token, you need to go one of these options:
+
 **a.** (the easy option) send a post request to `/api/v1/create_api_key` with an optician JSON with a name like below :
 `{ name: "test" }`
 then it returns a JSON that contains the name and the API key like this :
 `{ name: "test", key:"some_characters" }`
 which you can use for the
 further requests to **quotes** endpoints.
+
 **b.** send a post request to `/api/v1/create_user` with JSON in the body of the request with your email
 , your email and your desired password like this :
 
