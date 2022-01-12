@@ -66,3 +66,8 @@ that rate.
 - /api/v1/latest_quote
 If you send a get request to this endpoint, it returns the latest exchange rate from the DB.
 
+Testing:
+
+For running the tests, after the server is up (`docker-compose up`) just run the following command:
+
+`docker-compose exec backend python manage.py test`
