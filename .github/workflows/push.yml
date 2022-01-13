@@ -1,0 +1,24 @@
+name: Testing
+on: push
+
+jobs:
+  test_project:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: create env file
+      run: |
+        touch .env
+        cat > .env <<'_EOF'
+        ALPHAVANTAGE_API_TOKEN=demo
+        SECRET_KEY=django-insecure-8khne-%95$ina%b!1%@5au2js1&vx5gz0q@j2za9if4p5v18a)
+        DEBUG=True
+        DB_NAME=alpha
+        DB_USER=alpha
+        DB_PASS=alpha
+        _EOF
+
+    - name: Run the app
+      run: docker-compose up -d
+    - name: Run the Tests
+      run: docker exec elina_backend_1 python manage.py test
