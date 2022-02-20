@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && gunicorn -w 1 elina.wsgi:application -b 0.0.0.0:8000"
+    command: bash -c "chmod +x ./wait-for-postgres.sh && ./wait-for-postgres.sh db 5432 && python manage.py collectstatic --no-input && python manage.py migrate && gunicorn -w 1 elina.wsgi:application -b 0.0.0.0:8000"
     env_file:
       - ./.env
     volumes:
@@ -38,11 +38,8 @@ services:
     command: bash -c "celery -A elina beat -l info --logfile=celery.beat.log --detach && celery -A elina worker -l info"
     volumes:
       - .:/app
-    environment:
-      - DB_HOST=db
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
+    env_file:
+      - ./.env
     depends_on:
       - db
       - redis
